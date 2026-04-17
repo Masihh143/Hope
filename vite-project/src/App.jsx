@@ -4,6 +4,7 @@ import Feedback from './components/Feedback'
 import './App.css'
 
 function App() {
+  const [loading, setLoading] = useState(true)
   const getPage = () => (window.location.hash === '#dashboard' ? 'dashboard' : 'feedback')
 
   const [page, setPage] = useState(() => {
@@ -15,10 +16,17 @@ function App() {
   })
 
   useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 2000)
+    return () => clearTimeout(timer)
+  }, [])
+
+  useEffect(() => {
     const onNav = () => setPage(getPage())
     window.addEventListener('popstate', onNav)
     return () => window.removeEventListener('popstate', onNav)
   }, [])
+
+  if (loading) return null
 
   return page === 'dashboard' ? <Dashboard /> : <Feedback />
 }
